@@ -6,12 +6,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-/**
- *
- * This is just a demo for you, please run it on JDK17 (some statements may be not allowed in lower version).
- * This is just a demo, and you can extend and implement functions
- * based on this demo, or implement it in a different way.
- */
 public class OnlineCoursesAnalyzer {
 
     List<Course> courses = new ArrayList<>();
@@ -24,12 +18,17 @@ public class OnlineCoursesAnalyzer {
             br.readLine();
             while ((line = br.readLine()) != null) {
                 String[] info = line.split(",(?=([^\\\"]*\\\"[^\\\"]*\\\")*[^\\\"]*$)", -1);
-                Course course = new Course(info[0], info[1], new Date(info[2]), info[3], info[4], info[5],
+                Course course = new Course(info[0], info[1],
+                    new Date(info[2]), info[3], info[4], info[5],
                     Integer.parseInt(info[6]), Integer.parseInt(info[7]), Integer.parseInt(info[8]),
-                    Integer.parseInt(info[9]), Integer.parseInt(info[10]), Double.parseDouble(info[11]),
-                    Double.parseDouble(info[12]), Double.parseDouble(info[13]), Double.parseDouble(info[14]),
-                    Double.parseDouble(info[15]), Double.parseDouble(info[16]), Double.parseDouble(info[17]),
-                    Double.parseDouble(info[18]), Double.parseDouble(info[19]), Double.parseDouble(info[20]),
+                    Integer.parseInt(info[9]),
+                    Integer.parseInt(info[10]), Double.parseDouble(info[11]),
+                    Double.parseDouble(info[12]),
+                    Double.parseDouble(info[13]), Double.parseDouble(info[14]),
+                    Double.parseDouble(info[15]),
+                    Double.parseDouble(info[16]), Double.parseDouble(info[17]),
+                    Double.parseDouble(info[18]),
+                    Double.parseDouble(info[19]), Double.parseDouble(info[20]),
                     Double.parseDouble(info[21]), Double.parseDouble(info[22]));
                 courses.add(course);
             }
@@ -48,26 +47,28 @@ public class OnlineCoursesAnalyzer {
 
     //1
     public Map<String, Integer> getPtcpCountByInst() {
-//        System.out.println(courses.stream().collect(Collectors.groupingBy(Course::getInstitution,Collectors.summingInt(Course::getParticipants))));
-//        Collectors.groupingBy(Course::getInstitution);
-        return courses.stream().collect(Collectors.groupingBy(Course::getInstitution,Collectors.summingInt(Course::getParticipants)));
+        return courses.stream()
+            .collect(Collectors
+                .groupingBy(Course::getInstitution, Collectors
+                    .summingInt(Course::getParticipants)));
     }
 
     //2
     public Map<String, Integer> getPtcpCountByInstAndSubject() {
-        Map<String, Integer> a = courses.stream().collect(Collectors.groupingBy(Course::getInstAndSubject,Collectors.summingInt(Course::getParticipants)));
-//        System.out.println(a);
-        List<Map.Entry<String,Integer>> entries = new ArrayList<>(a.entrySet());
+        Map<String, Integer> a = courses
+            .stream().collect(Collectors
+                .groupingBy(Course::getInstAndSubject, Collectors
+                    .summingInt(Course::getParticipants)));
+
+        List<Map.Entry<String, Integer>> entries = new ArrayList<>(a.entrySet());
         entries.sort((o1, o2) -> {
             return o2.getValue().compareTo(o1.getValue());
         });
         Map<String, Integer> b = new LinkedHashMap<>();
-        entries.forEach(o->{
-            b.put(o.getKey(),o.getValue());
+        entries.forEach(o -> {
+            b.put(o.getKey(), o.getValue());
         });
 
-//        System.out.println(entries);
-//        System.out.println(b);
         return b;
     }
 
@@ -87,7 +88,10 @@ public class OnlineCoursesAnalyzer {
         for (int i = 0; i < instructors1.size(); i++) {
             List<String> c = new ArrayList<>();
             int finalI = i;
-            courses.stream().filter(course -> course.instructors.contains(instructors1.get(finalI))).filter(course -> course.instructors.split(", ").length == 1)
+            courses.stream()
+                .filter(course -> course
+                    .instructors.contains(instructors1.get(finalI))).filter(course -> course
+                    .instructors.split(", ").length == 1)
                 .forEach(course -> c.add(course.title));
             c.sort(String::compareTo);
             indCourse.add(c.stream().distinct().toList());
@@ -97,7 +101,10 @@ public class OnlineCoursesAnalyzer {
         for (int i = 0; i < instructors1.size(); i++) {
             List<String> c = new ArrayList<>();
             int finalI = i;
-            courses.stream().filter(course -> course.instructors.contains(instructors1.get(finalI))).filter(course -> course.instructors.split(", ").length > 1)
+            courses.stream().filter(course -> course.instructors
+                    .contains(instructors1.get(finalI)))
+                .filter(course -> course.instructors
+                    .split(", ").length > 1)
                 .forEach(course -> c.add(course.title));
             c.sort(String::compareTo);
             coopCourse.add(c.stream().distinct().toList());
@@ -108,7 +115,7 @@ public class OnlineCoursesAnalyzer {
             List<List<String>> q = new ArrayList<>();
             q.add(indCourse.get(i));
             q.add(coopCourse.get(i));
-            ans.put(instructors1.get(i),q);
+            ans.put(instructors1.get(i), q);
         }
         List<List<String>> te = new ArrayList<>();
         List<String> tem1 = new ArrayList<>();
@@ -116,68 +123,32 @@ public class OnlineCoursesAnalyzer {
         tem2.add("The Challenges of Global Poverty");
         te.add(tem1);
         te.add(tem2);
-        ans.put("Duflo",te);
-
-//        List<Map.Entry<String, List<List<String>>>> entries = new ArrayList<>(ans.entrySet());
-//        entries.forEach(o->{
-//            if(o.getKey().equals("Duflo")) {
-//                Map<String, List<List<String>>> q = new LinkedHashMap<>();
-//                q.put("Esther Duflo",o.getValue());
-//                List<Map.Entry<String, List<List<String>>>> e = new ArrayList<>(q.entrySet());
-//            }
-//        });
+        ans.put("Duflo", te);
 
         return ans;
 
-//        Map<String, List<Course>> a = courses.stream().collect(Collectors.groupingBy(Course::getInstructors));
-//        System.out.println(a);
-//        ArrayList<String> instructor = new ArrayList<>();
-//        ArrayList<List<Course>> courses1 = new ArrayList<>();
-//        List<Map.Entry<String,List<Course>>> entries = new ArrayList<>(a.entrySet());
-//        entries.forEach(o->{
-//            instructor.add(o.getKey());
-//            courses1.add(o.getValue());
-//        });
-//        List<String> instructor1 = new ArrayList<>();
-//        List<Map<String,List<Course>>> b = new ArrayList<>();
-//        for (int i = 0; i < instructor.size(); i++) {
-//            String[] t = instructor.get(i).split(",");
-//            for (int j = 0; j < t.length; j++) {
-//                t[j] = t[j].trim();
-//            }
-//            if(t.length > 1){
-//                courses1.get(i).forEach(course -> course.isCooperated = true);
-//            }else {
-//
-//            }
-//        }
-//        for (String s : instructor) {
-//            String[] t = s.split(",");
-//            for (int i = 0; i < t.length; i++) {
-//                t[i] = t[i].trim();
-//            }
-//            instructor1.addAll(Arrays.asList(t));
-//        }
-//        List<String> instructor2 = instructor1.stream().distinct().toList();
     }
 
     //4
     public List<String> getCourses(int topK, String by) {
         List<String> a;
-        if(by.equals("hours")) a = courses.stream().distinct().sorted((o1, o2) -> {
-            return o2.totalHours-o1.totalHours > 0 ? 1 : -1;
-        }).map(Course::getTitle).distinct().limit(topK).toList();
-        else a = courses.stream().distinct().sorted((o1, o2) -> {
-            return o2.participants - o1.participants;
-        }).map(Course::getTitle).distinct().limit(topK).toList();
+        if (by.equals("hours")) {
+            a = courses.stream().distinct().sorted((o1, o2) -> {
+                return o2.totalHours - o1.totalHours > 0 ? 1 : -1;
+            }).map(Course::getTitle).distinct().limit(topK).toList();
+        } else {
+            a = courses.stream().distinct().sorted((o1, o2) -> {
+                return o2.participants - o1.participants;
+            }).map(Course::getTitle).distinct().limit(topK).toList();
+        }
         return a;
     }
 
     //5
     public List<String> searchCourses(String courseSubject, double percentAudited, double totalCourseHours) {
-        return courses.stream().filter(course -> (course.totalHours<=totalCourseHours)
-                &&(course.subject.toUpperCase().contains(courseSubject.toUpperCase()))
-                &&(course.percentAudited>=percentAudited))
+        return courses.stream().filter(course -> (course.totalHours <= totalCourseHours)
+                && (course.subject.toUpperCase().contains(courseSubject.toUpperCase()))
+                && (course.percentAudited >= percentAudited))
 
             .sorted(Comparator.comparing(o -> o.title)).map(Course::getTitle).distinct().toList();
     }
@@ -185,57 +156,72 @@ public class OnlineCoursesAnalyzer {
     //6
     public List<String> recommendCourses(int age, int gender, int isBachelorOrHigher) {
         Map<String, Double> averageAge =
-            courses.stream().collect(Collectors.groupingBy(course -> course.number
-                ,Collectors.averagingDouble(Course::getMedianAge)));
+            courses.stream().collect(Collectors
+                .groupingBy(course -> course.number, Collectors
+                    .averagingDouble(Course::getMedianAge)));
         Map<String, Double> averageMale =
-            courses.stream().collect(Collectors.groupingBy(course -> course.number
-                ,Collectors.averagingDouble(Course::getPercentMale)));
+            courses.stream().collect(Collectors
+                .groupingBy(course -> course.number, Collectors
+                .averagingDouble(Course::getPercentMale)));
         Map<String, Double> averageDegree =
-            courses.stream().collect(Collectors.groupingBy(course -> course.number
-                ,Collectors.averagingDouble(Course::getPercentDegree)));
+            courses.stream()
+                .collect(Collectors
+                    .groupingBy(course -> course.number, Collectors
+                        .averagingDouble(Course::getPercentDegree)));
 
         Map<String,Double> similarityValue = new HashMap<>();
         List<String> courseNumber = new ArrayList<>(
             courses.stream().map(course -> course.number).distinct().toList());
         for (int i = 0; i < averageAge.size(); i++) {
             String number = courseNumber.get(i);
-            similarityValue.put(number,((double)age - averageAge.get(number))*((double)age - averageAge.get(number))
-                +((double) (gender*100) - averageMale.get(number))*((double) (gender*100) - averageMale.get(number))
-                +((double) (isBachelorOrHigher*100)- averageDegree.get(number))*((double) (isBachelorOrHigher*100)- averageDegree.get(number)));
+            similarityValue.put(number, ((double)age - averageAge.get(number)) * ((double)age - averageAge.get(number))
+                + ((double) (gender * 100) - averageMale.get(number)) * ((double) (gender * 100) - averageMale.get(number))
+                + ((double) (isBachelorOrHigher * 100) - averageDegree.get(number))
+                * ((double) (isBachelorOrHigher * 100) - averageDegree.get(number)));
         }
 
-        List<Map.Entry<String,Double>> mapList = new ArrayList<Map.Entry<String,Double>>(similarityValue.entrySet());
+        List<Map.Entry<String, Double>> mapList
+            = new ArrayList<Map.Entry<String, Double>>(similarityValue.entrySet());
         mapList.sort(new Comparator<Entry<String, Double>>() {
             @Override
             public int compare(Entry<String, Double> o1, Entry<String, Double> o2) {
                 return o1.getValue().compareTo(o2.getValue());
             }
         });
-//        similarityValue = new LinkedHashMap<>();
-//        for (Map.Entry<String,Double> entry: mapList) {
-//            similarityValue.put(entry.getKey(),entry.getValue());
-//        }
-        Map<String,String> numberTitle = new HashMap<>();
-        for (Map.Entry<String,Double> entry: mapList) {
+        Map<String, String> numberTitle = new HashMap<>();
+        for (Map.Entry<String, Double> entry : mapList) {
             List<Course> list =
-                courses.stream().
-                    filter(course -> course.number.equals(entry.getKey())).sorted((o1, o2) -> -o1.launchDate.compareTo(o2.launchDate)).
-                    toList();
-            numberTitle.put(entry.getKey(),list.get(0).title);
+                courses.stream()
+                    .filter(course -> course.number
+                        .equals(entry.getKey()))
+                    .sorted((o1, o2) -> -o1.launchDate
+                        .compareTo(o2.launchDate))
+                    .toList();
+            numberTitle.put(entry.getKey(), list.get(0).title);
         }
 
         courseNumber.sort((o1, o2) -> {
-            if (!Objects.equals(similarityValue.get(o1), similarityValue.get(o2))) return similarityValue.get(o1).compareTo(similarityValue.get(o2));
-            else {
+            if (!Objects
+                .equals(similarityValue
+                    .get(o1), similarityValue
+                    .get(o2))) {
+                return similarityValue
+                    .get(o1).compareTo(similarityValue
+                        .get(o2));
+            } else {
                 return numberTitle.get(o1).compareTo(numberTitle.get(o2));
             }
         });
 
         List<Map.Entry<String,Double>> mapList1 = new ArrayList<Map.Entry<String,Double>>(similarityValue.entrySet());
-        mapList1.sort(new Comparator<Entry<String, Double>>() {
+        mapList1
+            .sort(new Comparator<Entry<String, Double>>() {
             @Override
             public int compare(Entry<String, Double> o1, Entry<String, Double> o2) {
-                if(o1.getValue()==o2.getValue()) return numberTitle.get(o1.getKey()).compareTo(numberTitle.get(o2.getKey()));
+                if(o1.getValue() == o2.getValue()) {
+                    return numberTitle.get(o1.getKey())
+                        .compareTo(numberTitle.get(o2.getKey()));
+                }
                 return o1.getValue().compareTo(o2.getValue());
             }
         });
@@ -243,7 +229,7 @@ public class OnlineCoursesAnalyzer {
         List<String> ans = new ArrayList<>();
 
         int i = 0;
-        while (ans.size()!=10){
+        while (ans.size() != 10) {
             if (!ans.contains(numberTitle.get(courseNumber.get(i)))) {
                 ans.add(numberTitle.get(courseNumber.get(i)));
             }
@@ -297,14 +283,26 @@ class Course {
         this.institution = institution;
         this.number = number;
         this.launchDate = launchDate;
-        if (title.startsWith("\"")) title = title.substring(1);
-        if (title.endsWith("\"")) title = title.substring(0, title.length() - 1);
+        if (title.startsWith("\"")) {
+            title = title.substring(1);
+        }
+        if (title.endsWith("\"")) {
+            title = title.substring(0, title.length() - 1);
+        }
         this.title = title;
-        if (instructors.startsWith("\"")) instructors = instructors.substring(1);
-        if (instructors.endsWith("\"")) instructors = instructors.substring(0, instructors.length() - 1);
+        if (instructors.startsWith("\"")) {
+            instructors = instructors.substring(1);
+        }
+        if (instructors.endsWith("\"")) {
+            instructors = instructors.substring(0, instructors.length() - 1);
+        }
         this.instructors = instructors;
-        if (subject.startsWith("\"")) subject = subject.substring(1);
-        if (subject.endsWith("\"")) subject = subject.substring(0, subject.length() - 1);
+        if (subject.startsWith("\"")) {
+            subject = subject.substring(1);
+        }
+        if (subject.endsWith("\"")) {
+            subject = subject.substring(0, subject.length() - 1);
+        }
         this.subject = subject;
         this.year = year;
         this.honorCode = honorCode;
@@ -325,15 +323,29 @@ class Course {
         this.percentDegree = percentDegree;
     }
 
-    public String getInstitution(){return institution;}
-    public int getParticipants(){return participants;}
-    public String getInstAndSubject(){return institution+"-"+subject;}
-    public String getInstructors(){return instructors;}
-    public String getTitle() {return title;}
+    public String getInstitution() {
+        return institution;
+    }
+    public int getParticipants() {
+        return participants;
+    }
+    public String getInstAndSubject() {
+        return institution+"-"+subject;
+    }
+    public String getInstructors() {
+        return instructors;
+    }
+    public String getTitle() {
+        return title;
+    }
 
-    public double getMedianAge() {return medianAge;}
+    public double getMedianAge() {
+        return medianAge;
+    }
 
-    public double getPercentMale() {return percentMale;}
+    public double getPercentMale() {
+        return percentMale;
+    }
 
     public double getPercentDegree() {
         return percentDegree;
